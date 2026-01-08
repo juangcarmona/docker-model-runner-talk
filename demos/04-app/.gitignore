@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Environment variables
+.env
+# Keep template env files
+!.env.local
+!.env.docker
+
+# IDE - Keep VS Code config for team
+# .vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Flask
+instance/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db

@@ -1,0 +1,66 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Flask App (Local)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "app.py",
+                "FLASK_ENV": "development"
+            },
+            "envFile": "${workspaceFolder}/demos/04-app/.env.local",
+            "args": [
+                "run",
+                "--no-debugger",
+                "--no-reload",
+                "--host=0.0.0.0",
+                "--port=8081"
+            ],
+            "jinja": true,
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}/demos/04-app",
+            "preLaunchTask": "Setup Python venv",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Run app.py Directly (Local)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/demos/04-app/app.py",
+            "envFile": "${workspaceFolder}/demos/04-app/.env.local",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}/demos/04-app",
+            "preLaunchTask": "Setup Python venv"
+        },
+        {
+            "name": "Docker: Attach to Python App",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5678
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}/demos/04-app",
+                    "remoteRoot": "/app"
+                }
+            ],
+            "justMyCode": false,
+            "preLaunchTask": "Docker: Run with Debug"
+        },
+        {
+            "name": "Python: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "envFile": "${workspaceFolder}/demos/04-app/.env.local",
+            "cwd": "${fileDirname}"
+        }
+    ]
+}

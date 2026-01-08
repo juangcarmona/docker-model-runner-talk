@@ -1,0 +1,261 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Setup Python venv",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/demos/04-app/setup_venv.ps1"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/demos/04-app"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "silent",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Install Python Dependencies",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-Command",
+                "if (Test-Path .venv) { .venv/Scripts/Activate.ps1; pip install -r requirements.txt } else { Write-Host 'Virtual environment not found. Run Setup Python venv first.' }"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/demos/04-app"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Flask App (Local)",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-Command",
+                ".venv/Scripts/Activate.ps1; $env:FLASK_APP='app.py'; python -m flask run --host=0.0.0.0 --port=8081"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/demos/04-app",
+                "env": {
+                    "PYTHONPATH": "${workspaceFolder}/demos/04-app"
+                }
+            },
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^.*$",
+                    "file": 1,
+                    "location": 2,
+                    "message": 3
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".*",
+                    "endsPattern": ".*Running on.*"
+                }
+            },
+            "dependsOn": ["Setup Python venv"]
+        },
+        {
+            "label": "Docker: Build Image",
+            "type": "shell",
+            "command": "docker",
+            "args": [
+                "build",
+                "-t",
+                "python-genai-app:dev",
+                "."
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/demos/04-app"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Docker: Run Container",
+            "type": "shell",
+            "command": "docker",
+            "args": [
+                "run",
+                "--rm",
+                "-p",
+                "8081:8080",
+                "--env-file",
+                ".env.docker",
+                "-e",
+                "LLAMA_URL=http://host.docker.internal:11434/v1",
+                "-e",
+                "LLAMA_MODEL=llama3.2:1B-Q8_0",
+                "--name",
+                "python-genai-app",
+                "python-genai-app:dev"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/demos/04-app"
+            },
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^.*$",
+                    "file": 1,
+                    "location": 2,
+                    "message": 3
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".*",
+                    "endsPattern": ".*Server starting.*"
+                }
+            },
+            "dependsOn": ["Docker: Build Image"]
+        },
+        {
+            "label": "Docker: Run with Debug",
+            "type": "shell",
+            "command": "docker",
+            "args": [
+                "run",
+                "--rm",
+                "-p",
+                "8081:8080",
+                "-p",
+                "5678:5678",
+                "--env-file",
+                ".env.docker",
+                "-e",
+                "LLAMA_URL=http://host.docker.internal:11434/v1",
+                "-e",
+                "LLAMA_MODEL=llama3.2:1B-Q8_0",
+                "-e",
+                "DEBUGPY_ENABLE=true",
+                "--name",
+                "python-genai-app-debug",
+                "python-genai-app:debug"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/demos/04-app"
+            },
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^.*$",
+                    "file": 1,
+                    "location": 2,
+                    "message": 3
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".*",
+                    "endsPattern": ".*Listening for debugger.*"
+                }
+            },
+            "dependsOn": ["Docker: Build Debug Image"]
+        },
+        {
+            "label": "Docker: Build Debug Image",
+            "type": "shell",
+            "command": "docker",
+            "args": [
+                "build",
+                "-f",
+                "Dockerfile.debug",
+                "-t",
+                "python-genai-app:debug",
+                "."
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/demos/04-app"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Docker: Stop Container",
+            "type": "shell",
+            "command": "docker",
+            "args": [
+                "stop",
+                "python-genai-app"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Docker: Stop Debug Container",
+            "type": "shell",
+            "command": "docker",
+            "args": [
+                "stop",
+                "python-genai-app-debug"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Docker Compose: Up",
+            "type": "shell",
+            "command": "docker",
+            "args": [
+                "compose",
+                "up",
+                "--build"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/demos/04-app"
+            },
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^.*$",
+                    "file": 1,
+                    "location": 2,
+                    "message": 3
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".*",
+                    "endsPattern": ".*started.*"
+                }
+            }
+        },
+        {
+            "label": "Docker Compose: Down",
+            "type": "shell",
+            "command": "docker",
+            "args": [
+                "compose",
+                "down"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/demos/04-app"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Test: Run Static Tests",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-Command",
+                ".venv/Scripts/Activate.ps1; python test_static.py"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/demos/04-app"
+            },
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "dependsOn": ["Setup Python venv"],
+            "problemMatcher": []
+        }
+    ]
+}

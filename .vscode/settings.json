@@ -1,0 +1,50 @@
+{
+    "python.defaultInterpreterPath": "${workspaceFolder}/demos/04-app/.venv/Scripts/python.exe",
+    "python.terminal.activateEnvironment": true,
+    "python.envFile": "${workspaceFolder}/demos/04-app/.env.local",
+    
+    // Linting
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": false,
+    
+    // Formatting
+    "python.formatting.provider": "none",
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.python",
+        "editor.formatOnSave": false,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        }
+    },
+    
+    // Testing
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [
+        "demos/04-app"
+    ],
+    
+    // Docker
+    "docker.dockerPath": "docker",
+    
+    // Files
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/.pytest_cache": true
+    },
+    
+    // Search
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/venv": true,
+        "**/.venv": true,
+        "**/__pycache__": true
+    },
+    
+    // Terminal
+    "terminal.integrated.env.windows": {
+        "PYTHONPATH": "${workspaceFolder}/demos/04-app"
+    }
+}
