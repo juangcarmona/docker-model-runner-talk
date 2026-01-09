@@ -12,8 +12,8 @@
         "DEBUG": "true",
         "PYTHONUNBUFFERED": "1",
         "PYTHONPATH": "${workspaceFolder}",
-        "LLM_BASE_URL": "http://localhost:12434/engines/llama/v1",
-        "LLM_MODEL_NAME": "ai/smollm3:Q8_0"
+        "LLM_BASE_URL": "http://localhost:12434/engines/llama.cpp/v1",
+        "LLM_MODEL_NAME": "ai/gpt-oss:lates"
       }
     },
     {

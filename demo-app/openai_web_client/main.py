@@ -160,7 +160,7 @@ def chat_api():
         app.logger.error(f"Error calling LLM API: {e}")
         return jsonify({'error': 'Failed to get response from LLM'}), 500
 
-@cache.memoize(timeout=300)
+# @cache.memoize(timeout=300)
 def call_llm_api(user_message):
     """Calls the LLM API and returns the response with caching"""
     chat_request = {
@@ -184,7 +184,7 @@ def call_llm_api(user_message):
         get_llm_endpoint(),
         headers=headers,
         json=chat_request,
-        timeout=30
+        timeout=60
     )
     
     # Check if the status code is not 200 OK
