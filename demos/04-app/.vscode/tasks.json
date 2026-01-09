@@ -1,0 +1,18 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Docker: Build & Run OpenAI Web Client (Debug)",
+      "type": "shell",
+      "command": "docker compose up --build openai-web-client",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker: Stop OpenAI Web Client",
+      "type": "shell",
+      "command": "docker compose down",
+      "problemMatcher": []
+    }
+  ]
+}

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello-GenAI in Python</title>
+    <title>Docker Model Runner: Running Models Locally</title>
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
     <style>
         :root {
@@ -22,14 +23,19 @@
             padding: 0;
         }
 
+        html,
+        body {
+            height: 100%;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            line-height: 1.6;
             color: var(--text-color);
             background-color: #f9f9f9;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
         }
 
         h1 {
@@ -39,11 +45,10 @@
         }
 
         .chat-container {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            height: 70vh;
             background-color: white;
-            border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
             overflow: hidden;
         }
@@ -90,41 +95,44 @@
             border-left: 4px solid var(--primary-color);
             box-shadow: var(--box-shadow);
         }
-        
+
         /* Styling for structured content */
-        .bot-message h3, .bot-message h4, .bot-message h5 {
+        .bot-message h3,
+        .bot-message h4,
+        .bot-message h5 {
             margin-top: 10px;
             margin-bottom: 5px;
             color: var(--primary-color);
         }
-        
+
         .bot-message h3 {
             font-size: 1.2em;
             border-bottom: 1px solid #eee;
             padding-bottom: 5px;
         }
-        
+
         .bot-message h4 {
             font-size: 1.1em;
         }
-        
+
         .bot-message h5 {
             font-size: 1em;
         }
-        
+
         .bot-message p {
             margin-bottom: 10px;
         }
-        
-        .bot-message ul, .bot-message ol {
+
+        .bot-message ul,
+        .bot-message ol {
             margin-left: 20px;
             margin-bottom: 10px;
         }
-        
+
         .bot-message li {
             margin-bottom: 5px;
         }
-        
+
         .bot-message code {
             background-color: #f5f5f5;
             padding: 2px 4px;
@@ -132,7 +140,7 @@
             font-family: monospace;
             font-size: 0.9em;
         }
-        
+
         .bot-message pre {
             background-color: #f5f5f5;
             padding: 10px;
@@ -140,17 +148,17 @@
             overflow-x: auto;
             margin: 10px 0;
         }
-        
+
         .bot-message pre code {
             background-color: transparent;
             padding: 0;
         }
-        
+
         .bot-message a {
             color: var(--primary-color);
             text-decoration: none;
         }
-        
+
         .bot-message a:hover {
             text-decoration: underline;
         }
@@ -227,42 +235,21 @@
             margin: 10px 0;
         }
 
-        .features {
+        .footer {
             display: flex;
             justify-content: space-between;
-            margin-top: 30px;
-            gap: 20px;
-        }
-
-        .feature-card {
-            background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            padding: 20px;
-            flex: 1;
-        }
-
-        .feature-title {
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        .feature-description {
+            align-items: center;
+            padding: 8px 14px;
+            font-size: 13px;
             color: var(--light-text);
-            font-size: 14px;
-        }
-
-        .footer {
-            margin-top: 30px;
-            text-align: center;
-            color: var(--light-text);
-            font-size: 14px;
+            border-top: 1px solid var(--border-color);
+            background-color: #fafafa;
         }
 
         .footer a {
             color: var(--primary-color);
             text-decoration: none;
-            margin: 0 10px;
+            margin-right: 12px;
         }
 
         .footer a:hover {
@@ -270,94 +257,71 @@
         }
 
         @media (max-width: 768px) {
-            .features {
-                flex-direction: column;
-            }
-
             .message {
                 max-width: 90%;
             }
         }
     </style>
 </head>
+
 <body>
-    <h1>Hello-GenAI in Python</h1>
-    
+    <!-- <h1>Docker Model Runner: Running Models Locally</h1> -->
+
     <div class="chat-container">
         <div class="chat-header">
-            <div>AI Assistant</div>
+            <div>DMR - Example</div>
             <div class="model-info">
                 <span id="model-name">Loading model...</span>
             </div>
         </div>
-        
+
         <div id="chat-box">
             <div class="bot-message message">
-                Hello! I'm your GenAI assistant. How can I help you today?
+                Hello! I'm your local assistant. How can I help you today?
             </div>
-            
+
             <div class="suggestions">
                 <div class="suggestion">What can you do?</div>
-                <div class="suggestion">Tell me about Docker</div>
-                <div class="suggestion">How to use GenAI?</div>
+                <div class="suggestion">Tell me about Docker Model Runner</div>
                 <div class="suggestion" id="show-example">Show structured example</div>
             </div>
         </div>
-        
+
         <div class="input-container">
             <textarea id="message-input" placeholder="Type your message here..." rows="1"></textarea>
             <button id="send-button" disabled>Send</button>
         </div>
     </div>
-    
-    <div class="features">
-        <div class="feature-card">
-            <h3 class="feature-title">Fast Responses</h3>
-            <p class="feature-description">
-                Get quick and accurate answers to your questions with our optimized AI model.
-            </p>
-        </div>
-        <div class="feature-card">
-            <h3 class="feature-title">Secure & Private</h3>
-            <p class="feature-description">
-                Your conversations are secure and private with our enhanced security measures.
-            </p>
-        </div>
-        <div class="feature-card">
-            <h3 class="feature-title">Developer Friendly</h3>
-            <p class="feature-description">
-                Built with developers in mind, with API documentation and easy integration.
-            </p>
-        </div>
-    </div>
-    
+
     <div class="footer">
-        <div>
+        <div class="footer-left">
             <a href="/api/docs">API Docs</a>
-            <a href="/health">Health Status</a>
+            <a href="/health">Health</a>
         </div>
-        <div style="margin-top: 10px;">
-            &copy; 2025 hello-genai | Powered by <span id="model-name-footer">AI Language Model</span>
+        <div class="footer-right">
+            © <span id="year"></span> Juan García Carmona · Model: <span id="model-name-footer">unknown</span>
         </div>
     </div>
 
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById("year").textContent = new Date().getFullYear();
             const chatBox = document.getElementById('chat-box');
             const messageInput = document.getElementById('message-input');
             const sendButton = document.getElementById('send-button');
             const modelNameSpan = document.getElementById('model-name');
             const modelNameFooter = document.getElementById('model-name-footer');
             const suggestions = document.querySelectorAll('.suggestion');
-            
+
             // Track if a request is in progress
             let isRequestInProgress = false;
 
             // Auto-resize textarea
-            messageInput.addEventListener('input', function() {
+            messageInput.addEventListener('input', function () {
                 this.style.height = 'auto';
                 this.style.height = (this.scrollHeight) + 'px';
-                
+
                 // Enable/disable send button based on input
                 sendButton.disabled = this.value.trim() === '';
             });
@@ -370,63 +334,63 @@
                 },
                 body: JSON.stringify({ message: "!modelinfo" }),
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.model) {
-                    modelNameSpan.textContent = data.model;
-                    modelNameFooter.textContent = data.model;
-                } else {
+                .then(response => response.json())
+                .then(data => {
+                    if (data.model) {
+                        modelNameSpan.textContent = data.model;
+                        modelNameFooter.textContent = data.model;
+                    } else {
+                        modelNameSpan.textContent = "AI Language Model";
+                    }
+                })
+                .catch(error => {
                     modelNameSpan.textContent = "AI Language Model";
-                }
-            })
-            .catch(error => {
-                modelNameSpan.textContent = "AI Language Model";
-                console.error('Error fetching model info:', error);
-            });
+                    console.error('Error fetching model info:', error);
+                });
 
             // Format the response with markdown-like styling
             function formatResponse(text) {
                 // Handle code blocks
                 text = text.replace(/```([^`]+)```/g, '<pre><code>$1</code></pre>');
-                
+
                 // Handle inline code
                 text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
-                
+
                 // Handle bold text
                 text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-                
+
                 // Handle italic text
                 text = text.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-                
+
                 // Handle headers
                 text = text.replace(/^# (.+)$/gm, '<h3>$1</h3>');
                 text = text.replace(/^## (.+)$/gm, '<h4>$1</h4>');
                 text = text.replace(/^### (.+)$/gm, '<h5>$1</h5>');
-                
+
                 // Handle unordered lists
                 text = text.replace(/^- (.+)$/gm, '<li>$1</li>');
                 text = text.replace(/(<li>.+<\/li>\n)+/g, '<ul>$&</ul>');
-                
+
                 // Handle ordered lists
                 text = text.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
                 text = text.replace(/(<li>.+<\/li>\n)+/g, '<ol>$&</ol>');
-                
+
                 // Handle paragraphs
                 text = text.replace(/^([^<\n].+)$/gm, '<p>$1</p>');
-                
+
                 // Handle links
                 text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-                
+
                 // Handle line breaks
                 text = text.replace(/\n/g, '');
-                
+
                 return text;
             }
 
             function sendMessage() {
                 const message = messageInput.value.trim();
                 if (!message || isRequestInProgress) return;
-                
+
                 // Set flag to prevent multiple requests
                 isRequestInProgress = true;
 
@@ -441,7 +405,7 @@
                 userMessageDiv.className = 'user-message message';
                 userMessageDiv.textContent = message;
                 chatBox.appendChild(userMessageDiv);
-                
+
                 // Clear input and reset height
                 messageInput.value = '';
                 messageInput.style.height = '50px';
@@ -462,61 +426,61 @@
                     },
                     body: JSON.stringify({ message: message }),
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Remove loading indicator
-                    chatBox.removeChild(loadingDiv);
-                    
-                    // Add bot's response to chat
-                    const botMessageDiv = document.createElement('div');
-                    botMessageDiv.className = 'bot-message message';
-                    
-                    if (data.error) {
-                        botMessageDiv.textContent = 'Sorry, I encountered an error: ' + data.error;
-                    } else {
-                        // Format the response with markdown-like styling
-                        const formattedResponse = formatResponse(data.response);
-                        botMessageDiv.innerHTML = formattedResponse;
-                    }
-                    
-                    chatBox.appendChild(botMessageDiv);
-                    chatBox.scrollTop = chatBox.scrollHeight;
-                })
-                .catch(error => {
-                    // Remove loading indicator
-                    chatBox.removeChild(loadingDiv);
-                    
-                    // Show error message
-                    const errorMessageDiv = document.createElement('div');
-                    errorMessageDiv.className = 'bot-message message';
-                    errorMessageDiv.textContent = 'Sorry, I encountered an error. Please try again.';
-                    chatBox.appendChild(errorMessageDiv);
-                    console.error('Error:', error);
-                })
-                .finally(() => {
-                    // Reset request flag
-                    isRequestInProgress = false;
-                });
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Remove loading indicator
+                        chatBox.removeChild(loadingDiv);
+
+                        // Add bot's response to chat
+                        const botMessageDiv = document.createElement('div');
+                        botMessageDiv.className = 'bot-message message';
+
+                        if (data.error) {
+                            botMessageDiv.textContent = 'Sorry, I encountered an error: ' + data.error;
+                        } else {
+                            // Format the response with markdown-like styling
+                            const formattedResponse = formatResponse(data.response);
+                            botMessageDiv.innerHTML = formattedResponse;
+                        }
+
+                        chatBox.appendChild(botMessageDiv);
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    })
+                    .catch(error => {
+                        // Remove loading indicator
+                        chatBox.removeChild(loadingDiv);
+
+                        // Show error message
+                        const errorMessageDiv = document.createElement('div');
+                        errorMessageDiv.className = 'bot-message message';
+                        errorMessageDiv.textContent = 'Sorry, I encountered an error. Please try again.';
+                        chatBox.appendChild(errorMessageDiv);
+                        console.error('Error:', error);
+                    })
+                    .finally(() => {
+                        // Reset request flag
+                        isRequestInProgress = false;
+                    });
             }
 
             // Event listeners
             sendButton.addEventListener('click', sendMessage);
-            
-            messageInput.addEventListener('keydown', function(e) {
+
+            messageInput.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     sendMessage();
                 }
             });
-            
+
             // Add click event to suggestions
             suggestions.forEach(suggestion => {
-                suggestion.addEventListener('click', function() {
+                suggestion.addEventListener('click', function () {
                     if (this.id === 'show-example') {
                         showStructuredExample();
                     } else {
@@ -526,7 +490,7 @@
                     }
                 });
             });
-            
+
             // Function to show structured example
             function showStructuredExample() {
                 // Remove suggestions
@@ -534,42 +498,42 @@
                 if (suggestionsDiv) {
                     chatBox.removeChild(suggestionsDiv);
                 }
-                
+
                 // Add user message
                 const userMessageDiv = document.createElement('div');
                 userMessageDiv.className = 'user-message message';
                 userMessageDiv.textContent = "Show me an example of structured formatting";
                 chatBox.appendChild(userMessageDiv);
-                
+
                 // Show loading indicator
                 const loadingDiv = document.createElement('div');
                 loadingDiv.className = 'loading';
                 loadingDiv.textContent = 'Loading example...';
                 chatBox.appendChild(loadingDiv);
                 chatBox.scrollTop = chatBox.scrollHeight;
-                
+
                 // Fetch example
                 fetch('/example')
                     .then(response => response.json())
                     .then(data => {
                         // Remove loading indicator
                         chatBox.removeChild(loadingDiv);
-                        
+
                         // Add example response
                         const botMessageDiv = document.createElement('div');
                         botMessageDiv.className = 'bot-message message';
-                        
+
                         // Format the response
                         const formattedResponse = formatResponse(data.response);
                         botMessageDiv.innerHTML = formattedResponse;
-                        
+
                         chatBox.appendChild(botMessageDiv);
                         chatBox.scrollTop = chatBox.scrollHeight;
                     })
                     .catch(error => {
                         // Remove loading indicator
                         chatBox.removeChild(loadingDiv);
-                        
+
                         // Show error message
                         const errorMessageDiv = document.createElement('div');
                         errorMessageDiv.className = 'bot-message message';
@@ -581,4 +545,5 @@
         });
     </script>
 </body>
+
 </html>

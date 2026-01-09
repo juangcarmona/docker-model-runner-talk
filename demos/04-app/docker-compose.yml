@@ -1,13 +1,17 @@
 services:
-  python-genai:
+  openai-web-client:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8081:8080"
+      - "8081:8081"
+      - "5680:5680"
     environment:
-      - PORT=8080
-      - LOG_LEVEL=INFO
+      - PORT=8081
+      - LLM_BASE_URL=http://host.docker.internal:12434/engines/llama.cpp/v1
+      - LLM_MODEL_NAME=ai/smollm3:Q8_0
+      - DEBUG=true
+      - RUN_MODE=container
     models:
       - llama
     healthcheck:
@@ -19,5 +23,5 @@ services:
 
 models:
   llama:
-    model: ai/llama3.2:1B-Q8_0
+    model: ai/smollm3:Q8_0
     context_size: 2048

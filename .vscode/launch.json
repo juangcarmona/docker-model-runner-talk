@@ -21,7 +21,6 @@
             "jinja": true,
             "justMyCode": true,
             "cwd": "${workspaceFolder}/demos/04-app",
-            "preLaunchTask": "Setup Python venv",
             "console": "integratedTerminal"
         },
         {
@@ -32,8 +31,7 @@
             "envFile": "${workspaceFolder}/demos/04-app/.env.local",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "cwd": "${workspaceFolder}/demos/04-app",
-            "preLaunchTask": "Setup Python venv"
+            "cwd": "${workspaceFolder}/demos/04-app"
         },
         {
             "name": "Docker: Attach to Python App",
@@ -61,6 +59,6 @@
             "justMyCode": true,
             "envFile": "${workspaceFolder}/demos/04-app/.env.local",
             "cwd": "${fileDirname}"
-        }
+        },
     ]
 }

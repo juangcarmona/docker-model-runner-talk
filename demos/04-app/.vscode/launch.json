@@ -1,0 +1,63 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Local Debug",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "openai_web_client.main",
+      "console": "integratedTerminal",
+      "env": {
+        "RUN_MODE": "local",
+        "DEBUG": "true",
+        "PYTHONUNBUFFERED": "1",
+        "PYTHONPATH": "${workspaceFolder}",
+        "LLM_BASE_URL": "http://localhost:12434/engines/llama/v1",
+        "LLM_MODEL_NAME": "ai/smollm3:Q8_0"
+      }
+    },
+    {
+      "name": "Local Live Reload",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "openai_web_client.main",
+      "env": {
+        "RUN_MODE": "local",
+        "DEBUG": "false",
+        "PYTHONUNBUFFERED": "1",
+        "PYTHONPATH": "${workspaceFolder}",
+        "LLM_BASE_URL": "http://localhost:12434/engines/llama/v1",
+        "LLM_MODEL_NAME": "ai/smollm3:Q8_0"
+      },
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Docker Attach",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": {
+        "host": "localhost",
+        "port": 5680
+      },
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}/openai_web_client",
+          "remoteRoot": "/app/openai_web_client"
+        }
+      ],
+      "preLaunchTask": "Docker: Build & Run OpenAI Web Client (Debug)"
+    },
+    {
+      "name": "pytest OpenAI Web Client",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}",
+        "PYTEST_ADDOPTS": "--no-cov"
+      },
+      "console": "integratedTerminal"
+    }
+  ]
+}

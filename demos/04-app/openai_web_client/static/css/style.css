@@ -327,44 +327,6 @@ body {
     font-size: 0.9rem;
 }
 
-.features {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 2rem;
-    gap: 1.5rem;
-}
-
-.feature-card {
-    background-color: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    padding: 1.5rem;
-    flex: 1;
-    transition: var(--transition);
-}
-
-.feature-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.feature-icon {
-    font-size: 2rem;
-    color: var(--primary-color);
-    margin-bottom: 1rem;
-}
-
-.feature-title {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-    color: var(--text-color);
-}
-
-.feature-description {
-    color: var(--light-text);
-    font-size: 0.9rem;
-}
-
 .clear-button {
     background: none;
     border: none;
@@ -453,10 +415,6 @@ body.dark-mode .suggestion {
 
 /* Responsive design */
 @media (max-width: 768px) {
-    .features {
-        flex-direction: column;
-    }
-
     .message {
         max-width: 90%;
     }

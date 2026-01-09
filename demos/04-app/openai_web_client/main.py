@@ -39,44 +39,56 @@ swaggerui_blueprint = get_swaggerui_blueprint(
 )
 app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
-def configure_logging():
-    """Configure application logging"""
-    log_level = os.getenv("LOG_LEVEL", "INFO").upper()
-    numeric_level = getattr(logging, log_level, logging.INFO)
-    
-    # Configure Flask logger
-    app.logger.setLevel(numeric_level)
-    
-    # Add a formatter to the handler
-    formatter = logging.Formatter(
-        '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+def configure_logging(debug: bool):
+    level = logging.DEBUG if debug else logging.INFO
+    logging.basicConfig(
+        level=level,
+        format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
     )
-    for handler in app.logger.handlers:
-        handler.setFormatter(formatter)
+    app.logger.setLevel(level)
+
+def resolve_runtime_mode():
+    run_mode = os.getenv("RUN_MODE", "local").lower()
+    debug = os.getenv("DEBUG", "false").lower() == "true"
+
+    if run_mode not in ("local", "container"):
+        raise RuntimeError(f"Invalid RUN_MODE: {run_mode}")
+
+    return run_mode, debug
+
+def maybe_enable_debugger(
+    run_mode: str = "local",
+    debug: bool | None = None
+):
+    if run_mode == "container" and debug:
+        app.logger.warning("🐛 Container debug mode — waiting for debugger on port 5680")
+        import debugpy
+        debugpy.listen(("0.0.0.0", 5680))
+        debugpy.wait_for_client()
 
 def get_llm_endpoint():
     """Returns the complete LLM API endpoint URL"""
     # Use Docker Model Runner injected variables
-    llama_url = os.getenv("LLAMA_URL", "")
-    return f"{llama_url}/chat/completions"
+    LLM_BASE_URL = os.getenv("LLM_BASE_URL", "")
+    return f"{LLM_BASE_URL}/chat/completions"
 
 def get_model_name():
     """Returns the model name to use for API requests"""
     # Use Docker Model Runner injected variables
-    return os.getenv("LLAMA_MODEL", "")
+    return os.getenv("LLM_MODEL_NAME", "")
 
 def validate_environment():
     """Validates required environment variables and provides warnings"""
     # Use Docker Model Runner injected variables
-    llama_url = os.getenv("LLAMA_URL", "")
-    llama_model = os.getenv("LLAMA_MODEL", "")
+    LLM_BASE_URL = os.getenv("LLM_BASE_URL", "")
+    LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME", "")
     
-    if not llama_url:
-        app.logger.warning("No LLM endpoint configured. Set LLAMA_URL.")
-    if not llama_model:
-        app.logger.warning("No LLM model configured. Set LLAMA_MODEL.")
+    if not LLM_BASE_URL:
+        app.logger.warning("No LLM endpoint configured. Set LLM_BASE_URL.")
+    if not LLM_MODEL_NAME:
+        app.logger.warning("No LLM model configured. Set LLM_MODEL_NAME.")
     
-    return llama_url and llama_model
+    return LLM_BASE_URL and LLM_MODEL_NAME
 
 @app.route('/')
 def index():
@@ -197,19 +209,36 @@ def add_security_headers(response):
     response.headers['Content-Security-Policy'] = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com"
     return response
 
+@app.after_request
+def disable_cache_in_dev(response):
+    if os.getenv("RUN_MODE", "local") == "local":
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+    return response
+
 if __name__ == '__main__':
-    # Configure logging
-    configure_logging()
-    
-    # Validate environment
+    run_mode, debug = resolve_runtime_mode()
+
+    configure_logging(debug)
+    maybe_enable_debugger(run_mode, debug)
+
     port = int(os.getenv("PORT", 8081))
-    env_valid = validate_environment()
-    
-    if not env_valid:
-        app.logger.warning("Environment not fully configured. Some features may not work.")
-    
-    app.logger.info(f"Server starting on http://localhost:{port}")
-    app.logger.info(f"Using LLM endpoint: {get_llm_endpoint()}")
-    app.logger.info(f"Using model: {get_model_name()}")
-    
-    app.run(host='0.0.0.0', port=port, debug=os.getenv("DEBUG", "false").lower() == "true")
+
+    validate_environment()
+
+    app.logger.info(f"Server starting on 0.0.0.0:{port}")
+
+    app.logger.info(f"LLM endpoint: {get_llm_endpoint()}")
+    app.logger.info(f"Model: {get_model_name()}")
+    app.logger.info(f"Run mode: {run_mode}")
+    app.logger.info(f"Debug: {debug}")
+
+    app.run(
+        host="0.0.0.0",
+        port=port,
+        debug=False,
+        use_reloader=(run_mode == "local"),
+        extra_files=None
+    )
+

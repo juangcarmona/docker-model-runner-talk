@@ -46,5 +46,6 @@
     // Terminal
     "terminal.integrated.env.windows": {
         "PYTHONPATH": "${workspaceFolder}/demos/04-app"
-    }
+    },
+    "containers.containerCommand": "docker"
 }

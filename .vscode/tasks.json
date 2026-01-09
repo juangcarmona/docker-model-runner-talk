@@ -2,25 +2,6 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Setup Python venv",
-            "type": "shell",
-            "command": "powershell",
-            "args": [
-                "-ExecutionPolicy",
-                "Bypass",
-                "-File",
-                "${workspaceFolder}/demos/04-app/setup_venv.ps1"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}/demos/04-app"
-            },
-            "problemMatcher": [],
-            "presentation": {
-                "reveal": "silent",
-                "panel": "shared"
-            }
-        },
-        {
             "label": "Install Python Dependencies",
             "type": "shell",
             "command": "powershell",
@@ -96,7 +77,7 @@
                 "-e",
                 "LLAMA_URL=http://host.docker.internal:11434/v1",
                 "-e",
-                "LLAMA_MODEL=llama3.2:1B-Q8_0",
+                "LLAMA_MODEL=ai/smollm3:Q8_0",
                 "--name",
                 "python-genai-app",
                 "python-genai-app:dev"
@@ -136,7 +117,7 @@
                 "-e",
                 "LLAMA_URL=http://host.docker.internal:11434/v1",
                 "-e",
-                "LLAMA_MODEL=llama3.2:1B-Q8_0",
+                "LLAMA_MODEL=smollm3:Q8_0",
                 "-e",
                 "DEBUGPY_ENABLE=true",
                 "--name",
