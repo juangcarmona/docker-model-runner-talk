@@ -13,7 +13,7 @@
         "PYTHONUNBUFFERED": "1",
         "PYTHONPATH": "${workspaceFolder}",
         "LLM_BASE_URL": "http://localhost:12434/engines/llama.cpp/v1",
-        "LLM_MODEL_NAME": "ai/gpt-oss:lates"
+        "LLM_MODEL_NAME": "ai/gpt-oss:latest"
       }
     },
     {
